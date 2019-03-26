@@ -13,9 +13,11 @@ object AssetPacker {
 fun main(args: Array<String>) {
     val settings = TexturePacker.Settings().apply {
         debug = AssetPacker.DRAW_DEBUG_OUTLINE
-        maxWidth = 2048
-        maxHeight = 2048
+        maxWidth = 4096
+        maxHeight = 4096
     }
 
     TexturePacker.process(settings, "${AssetPacker.RAW_ASSETS_PATH}/player", "${AssetPacker.ASSETS_PATH}/player", "player")
+    TexturePacker.process(settings, "${AssetPacker.RAW_ASSETS_PATH}/backgrounds/forest", "${AssetPacker.ASSETS_PATH}/backgrounds/forest", "forest_background")
+
 }

@@ -63,6 +63,14 @@ project(":android") {
 
     configurations { natives }
 
+    android {
+        defaultConfig {
+            minSdkVersion 21
+            targetSdkVersion 28
+            multiDexEnabled true
+        }
+    }
+
     dependencies {
         implementation project(":core")
         implementation "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
@@ -90,6 +98,7 @@ project(":android") {
         // Gives error
         //implementation "de.tomgrill.gdxdialogs:gdx-dialogs-android:1.2.5"
         implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+        implementation 'com.android.support:multidex:1.0.3'
     }
 }
 

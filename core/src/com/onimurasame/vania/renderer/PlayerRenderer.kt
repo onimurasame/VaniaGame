@@ -11,7 +11,10 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import com.onimurasame.vania.configuration.GameConfig
 import com.onimurasame.vania.controller.PlayerController
 import com.onimurasame.vania.entity.Player
-import com.onimurasame.vania.util.ext.*
+import com.onimurasame.vania.util.ext.GdxArray
+import com.onimurasame.vania.util.ext.findAllRegions
+import com.onimurasame.vania.util.ext.logger
+import com.onimurasame.vania.util.ext.use
 
 class PlayerRenderer(assetManager: AssetManager, private val playerController: PlayerController) : Disposable {
 
@@ -30,7 +33,11 @@ class PlayerRenderer(assetManager: AssetManager, private val playerController: P
 
     private val idleAnimation: Animation<TextureAtlas.AtlasRegion>
     private val crouchAnimation: Animation<TextureAtlas.AtlasRegion>
-    private val attackAnimation: Animation<TextureAtlas.AtlasRegion>
+    private val attackAnimation0: Animation<TextureAtlas.AtlasRegion>
+    private val attackAnimation1: Animation<TextureAtlas.AtlasRegion>
+    private val attackAnimation2: Animation<TextureAtlas.AtlasRegion>
+
+    private val attackAnimations: GdxArray<Animation<TextureAtlas.AtlasRegion>> = GdxArray()
 
     private var idleElapsedTime = 0f
     private var attackElapsedTime = 0f
@@ -44,7 +51,13 @@ class PlayerRenderer(assetManager: AssetManager, private val playerController: P
 
         idleAnimation = Animation(1f / 4f, playerAtlas.findAllRegions(Player.IDLE_ANIMATION_UNARMED))
         crouchAnimation = Animation(1f /4f, playerAtlas.findAllRegions(Player.IDLE_ANIMATION_CROUCH))
-        attackAnimation = Animation(1f / 10f, playerAtlas.findAllRegions(Player.ATTACK_ANIMATION_UNARMED))
+        attackAnimation0 = Animation(1f / 10f, playerAtlas.findAllRegions(Player.ATTACK_ANIMATION_SWORD1))
+        attackAnimation1 = Animation(1f / 10f, playerAtlas.findAllRegions(Player.ATTACK_ANIMATION_SWORD2))
+        attackAnimation2 = Animation(1f / 10f, playerAtlas.findAllRegions(Player.ATTACK_ANIMATION_SWORD3))
+
+        attackAnimations.add(attackAnimation0)
+        attackAnimations.add(attackAnimation1)
+        attackAnimations.add(attackAnimation2)
 
 
     }
@@ -52,15 +65,18 @@ class PlayerRenderer(assetManager: AssetManager, private val playerController: P
     fun render() {
         viewport.apply()
         camera.update()
-        clearScreen()
 
         batch.projectionMatrix = camera.combined
 
         batch.use {
             when(playerController.player.state) {
                 Player.State.IDLE -> drawIdleAnimation()
+                Player.State.MOVING -> log.debug("moving")
+                Player.State.JUMPING -> log.debug("jumping")
+                Player.State.STANDING_ATTACK -> drawAttackAnimation()
                 Player.State.CROUCHING -> drawCrouchingAnimation()
-                Player.State.ATTACKING -> drawAttackAnimation()
+                Player.State.CROUCHING_ATTACK -> log.debug("crouching_attack")
+
 
             }
         }
@@ -79,11 +95,11 @@ class PlayerRenderer(assetManager: AssetManager, private val playerController: P
     }
 
     private fun drawAttackAnimation() {
+        batch.draw(attackAnimations[playerController.player.comboState].getKeyFrame(attackElapsedTime), playerController.player.x, playerController.player.y)
 
-        batch.draw(attackAnimation.getKeyFrame(attackElapsedTime), playerController.player.x, playerController.player.y)
-
-        if(attackAnimation.isAnimationFinished(attackElapsedTime)) {
+        if(attackAnimations[playerController.player.comboState].isAnimationFinished(attackElapsedTime)) {
             attackElapsedTime = 0f
+            playerController.player.comboState++
             playerController.player.state = Player.State.IDLE
         } else {
             attackElapsedTime += Gdx.graphics.deltaTime

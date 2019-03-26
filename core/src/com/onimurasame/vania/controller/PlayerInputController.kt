@@ -4,6 +4,7 @@ import com.badlogic.gdx.InputProcessor
 import com.onimurasame.vania.entity.Player
 import com.onimurasame.vania.rule.isCrouching
 import com.onimurasame.vania.rule.isIdle
+import com.onimurasame.vania.rule.wasCrouching
 import com.onimurasame.vania.util.ext.asKeyString
 import com.onimurasame.vania.util.ext.logger
 
@@ -34,10 +35,16 @@ class PlayerInputController(private val player: Player) : InputProcessor {
         log.debug("${keycode.asKeyString()} up")
         when (keycode.asKeyString()) {
             "S" -> {
-                //TODO Fix crouching being interrupted by another key release
                 log.debug("Crouching key released...")
                 player.state = Player.State.IDLE
             }
+            "Enter" -> {
+                if(player.wasCrouching()) {
+                    log.debug("Crouching Attack Released")
+                    player.state = Player.State.CROUCHING
+                }
+            }
+
         }
         return true
     }
@@ -53,7 +60,7 @@ class PlayerInputController(private val player: Player) : InputProcessor {
             when (keycode.asKeyString()) {
                 "Enter" -> {
                     log.debug("Attack key pressed...")
-                    player.state = Player.State.ATTACKING
+                    player.state = Player.State.STANDING_ATTACK
                 }
                 "S" -> {
                     log.debug("Crouch key pressed...")
@@ -64,7 +71,7 @@ class PlayerInputController(private val player: Player) : InputProcessor {
             when (keycode.asKeyString()) {
                 "Enter" -> {
                     log.debug("Attack key pressed...")
-                    player.state = Player.State.ATTACKING
+                    //player.state = Player.State.CROUCHING_ATTACK
                 }
                 "S" -> {
                     log.debug("Crouch key pressed...")

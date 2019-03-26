@@ -5,8 +5,6 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration
 import com.onimurasame.vania.VaniaGame
 import com.onimurasame.vania.configuration.GameConfig
 
-class DesktopLauncher {}
-
 fun main(arg: Array<String>) {
     val config = LwjglApplicationConfiguration()
 

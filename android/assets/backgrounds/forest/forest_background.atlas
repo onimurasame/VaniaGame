@@ -1,0 +1,83 @@
+
+forest_background.png
+size: 4096,4096
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Layer_0000
+  rotate: false
+  xy: 2, 3182
+  size: 928, 793
+  orig: 928, 793
+  offset: 0, 0
+  index: 9
+Layer_0001
+  rotate: false
+  xy: 2, 2387
+  size: 928, 793
+  orig: 928, 793
+  offset: 0, 0
+  index: 8
+Layer_0002
+  rotate: false
+  xy: 932, 3182
+  size: 928, 793
+  orig: 928, 793
+  offset: 0, 0
+  index: 7
+Layer_0003
+  rotate: false
+  xy: 2, 1592
+  size: 928, 793
+  orig: 928, 793
+  offset: 0, 0
+  index: 6
+Layer_0004_Lights
+  rotate: false
+  xy: 932, 2387
+  size: 928, 793
+  orig: 928, 793
+  offset: 0, 0
+  index: -1
+Layer_0005
+  rotate: false
+  xy: 1862, 3182
+  size: 928, 793
+  orig: 928, 793
+  offset: 0, 0
+  index: 5
+Layer_0006
+  rotate: false
+  xy: 2, 797
+  size: 928, 793
+  orig: 928, 793
+  offset: 0, 0
+  index: 4
+Layer_0007_Lights
+  rotate: false
+  xy: 932, 1592
+  size: 928, 793
+  orig: 928, 793
+  offset: 0, 0
+  index: -1
+Layer_0008
+  rotate: false
+  xy: 1862, 2387
+  size: 928, 793
+  orig: 928, 793
+  offset: 0, 0
+  index: 3
+Layer_0009
+  rotate: false
+  xy: 2792, 3182
+  size: 928, 793
+  orig: 928, 793
+  offset: 0, 0
+  index: 2
+Layer_0010
+  rotate: false
+  xy: 2, 2
+  size: 928, 793
+  orig: 928, 793
+  offset: 0, 0
+  index: 1

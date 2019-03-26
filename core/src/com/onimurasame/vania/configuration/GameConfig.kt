@@ -5,8 +5,8 @@ object GameConfig {
     const val WIDTH = 800 // For desktop Only
     const val HEIGHT = 600 // For desktop Only
 
-    const val WORLD_WIDTH = 100f // World units
-    const val WORLD_HEIGHT = 50f // World Units
+    const val WORLD_WIDTH = 1000f * 0.3f // World units
+    const val WORLD_HEIGHT = 500f  * 0.3f // World Units
     const val WORLD_CENTER_Y = WORLD_HEIGHT / 2
     const val WORLD_CENTER_X = WORLD_WIDTH / 2
 
