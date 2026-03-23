@@ -1,0 +1,28 @@
+---
+description: Project-only autonomous MVP workflow and QA gates
+alwaysApply: true
+---
+
+# Autonomous Workflow (VaniaGame)
+
+- Operate autonomously for this repository unless blocked by permissions, credentials, or destructive actions.
+- Continue implementation until acceptance gates pass; do not pause for routine confirmations.
+
+# Acceptance Gates Before Reporting Done
+
+- `:core:test` passes.
+- `:desktop:compileKotlin` passes.
+- `:android:assembleDebug` passes when Android module is touched.
+- Replay automation passes for available trace expectations.
+
+# Engineering Preferences
+
+- Prioritize deterministic, testable gameplay logic.
+- Keep simulation logic aligned with runtime gameplay behavior.
+- Add non-regression tests for every fixed gameplay bug.
+- Keep assets and UX placeholders lightweight unless explicitly requested.
+
+# Escalation Rules
+
+- Ask before destructive operations (delete/reset/history rewrite).
+- Ask when external credentials or account actions are required.

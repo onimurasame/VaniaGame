@@ -27,7 +27,7 @@ class PlayerInputController(private val player: Player) : InputProcessor {
         return false
     }
 
-    override fun scrolled(amount: Int): Boolean {
+    override fun scrolled(amountX: Float, amountY: Float): Boolean {
         return false
     }
 
@@ -84,6 +84,10 @@ class PlayerInputController(private val player: Player) : InputProcessor {
     }
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+        return false
+    }
+
+    override fun touchCancelled(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         return false
     }
 }

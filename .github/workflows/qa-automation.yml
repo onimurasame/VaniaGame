@@ -1,0 +1,38 @@
+name: QA Automation
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Unit and simulation tests
+        run: ./gradlew :core:test :desktop:compileKotlin
+
+      - name: Replay all traces against expectations
+        run: ./gradlew :core:replayTraceBatch -PtracesDir=traces
+
+      - name: Generate QA report
+        run: bash ./tools/qa-report.sh traces
+
+      - name: Upload QA report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-report
+          path: build/reports/qa/latest.md

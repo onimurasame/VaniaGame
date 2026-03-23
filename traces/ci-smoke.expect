@@ -1,0 +1,8 @@
+vania-expectation-v1
+roomIndex=0
+playerX=120.0
+playerY=118.09722
+playerHp=100
+enemyHp=60
+enemyAlive=true
+hasDoubleJump=false

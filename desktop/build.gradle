@@ -1,55 +1,51 @@
-apply plugin: "kotlin"
+apply plugin: "application"
 
-sourceCompatibility = 1.6
-sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.main.java.srcDirs = ["src/"]
 
-project.ext.mainClassName = "com.onimurasame.vania.desktop.DesktopLauncherKt"
-project.ext.assetsDir = new File("../android/assets")
+ext.mainClassName = "com.onimurasame.vania.desktop.DesktopLauncherKt"
+ext.assetsDir = file("../android/assets")
 
-task run(dependsOn: classes, type: JavaExec) {
-    main = project.mainClassName
-    classpath = sourceSets.main.runtimeClasspath
-    standardInput = System.in
-    workingDir = project.assetsDir
-    ignoreExitValue = true
+dependencies {
+    implementation project(":core")
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+    runtimeOnly "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    runtimeOnly "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+    runtimeOnly "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-desktop"
 }
 
-task debug(dependsOn: classes, type: JavaExec) {
-    main = project.mainClassName
-    classpath = sourceSets.main.runtimeClasspath
-    standardInput = System.in
+application {
+    mainClass = project.mainClassName
+}
+
+tasks.named("run", JavaExec).configure {
     workingDir = project.assetsDir
-    ignoreExitValue = true
+    standardInput = System.in
+}
+
+tasks.register("debug", JavaExec) {
+    dependsOn tasks.classes
+    mainClass = project.mainClassName
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir = project.assetsDir
+    standardInput = System.in
     debug = true
 }
 
-task dist(type: Jar) {
-    from files(sourceSets.main.output.classesDirs)
-    from files(sourceSets.main.output.resourcesDir)
-    from {configurations.compile.collect {zipTree(it)}}
-    from files(project.assetsDir);
- 
+tasks.register("dist", Jar) {
+    archiveClassifier = "all"
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
-        attributes 'Main-Class': project.mainClassName
+        attributes "Main-Class": project.mainClassName
+    }
+    from sourceSets.main.output
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
-
-dist.dependsOn classes
 
 eclipse {
     project {
         name = appName + "-desktop"
-        linkedResource name: 'assets', type: '2', location: 'PARENT-1-PROJECT_LOC/android/assets'
+        linkedResource name: "assets", type: "2", location: "PARENT-1-PROJECT_LOC/android/assets"
     }
-}
-
-task afterEclipseImport(description: "Post processing after project generation", group: "IDE") {
-  doLast {
-    def classpath = new XmlParser().parse(file(".classpath"))
-    new Node(classpath, "classpathentry", [ kind: 'src', path: 'assets' ]);
-    def writer = new FileWriter(file(".classpath"))
-    def printer = new XmlNodePrinter(new PrintWriter(writer))
-    printer.setPreserveWhitespace(true)
-    printer.print(classpath)
-  }
 }

@@ -5,7 +5,7 @@ import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.utils.Logger
-import com.onimurasame.vania.screen.Gameplay
+import com.onimurasame.vania.screen.MainMenuScreen
 
 class VaniaGame : Game() {
     val assetManager = AssetManager()
@@ -14,7 +14,7 @@ class VaniaGame : Game() {
         Gdx.app.logLevel = Application.LOG_DEBUG
         assetManager.logger.level = Logger.DEBUG
 
-        setScreen(Gameplay(this))
+        setScreen(MainMenuScreen(this))
     }
 
     override fun dispose() {
