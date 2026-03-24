@@ -1,0 +1,29 @@
+name: Technical Task
+description: Internal engineering task tied to ONI story.
+title: "ONI-<number>: Tech - <short task>"
+labels: ["tech-task"]
+body:
+  - type: input
+    id: oni_id
+    attributes:
+      label: ONI ID
+      placeholder: ONI-123
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      placeholder: What will be changed and why
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Definition of Done
+      placeholder: |
+        - [ ] :core:test passes
+        - [ ] replay/golden checks pass
+        - [ ] QA report updated
+    validations:
+      required: true

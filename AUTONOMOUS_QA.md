@@ -104,3 +104,15 @@ bash ./tools/qa-report.sh traces
 ```
 
 CI also uploads the latest report as a workflow artifact (`qa-report`).
+
+## Backlog third pass
+
+After implementation and QA gates, run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tools\oni-backlog-orchestrator.ps1 -Pass all
+```
+
+Process reference:
+
+- `BACKLOG_AUTOMATION_PROCESS.md`

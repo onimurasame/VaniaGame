@@ -1,0 +1,42 @@
+name: Bug Report
+description: Report a defect with deterministic repro steps.
+title: "ONI-<number>: Bug - <short description>"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: "Use ONI IDs and include replay trace when possible."
+  - type: input
+    id: story_id
+    attributes:
+      label: Related Story ID
+      placeholder: ONI-123
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Bug Summary
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction Steps
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: trace_file
+    attributes:
+      label: Trace File (optional)
+      placeholder: traces/oni-123-bug.trace
+  - type: textarea
+    id: expected_vs_actual
+    attributes:
+      label: Expected vs Actual
+    validations:
+      required: true

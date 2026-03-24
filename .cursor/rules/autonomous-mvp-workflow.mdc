@@ -22,7 +22,22 @@ alwaysApply: true
 - Add non-regression tests for every fixed gameplay bug.
 - Keep assets and UX placeholders lightweight unless explicitly requested.
 
+# Backlog Story IDs
+
+- Use `ONI-<number>` for all story identifiers (issues, branches, commits, and PR references).
+- Do not use `US-<number>` in this project.
+
 # Escalation Rules
 
 - Ask before destructive operations (delete/reset/history rewrite).
 - Ask when external credentials or account actions are required.
+
+# Backlog Pass Reminder Triggers
+
+- Proactively remind to run ONI backlog passes at these checkpoints:
+  - after a feature implementation batch is complete,
+  - after QA gates pass,
+  - before opening a PR,
+  - after merge (to transition status labels).
+- Preferred command to remind:
+  - `powershell -ExecutionPolicy Bypass -File .\tools\oni-backlog-orchestrator.ps1 -Pass all`

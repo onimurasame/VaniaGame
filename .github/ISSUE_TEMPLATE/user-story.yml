@@ -1,0 +1,45 @@
+name: User Story
+description: Create a player-facing story with acceptance criteria.
+title: "ONI-<number>: As a <role>, I can <capability> so that <benefit>"
+labels: ["story"]
+body:
+  - type: markdown
+    attributes:
+      value: "Use ONI IDs only. Example: ONI-42"
+  - type: input
+    id: story_id
+    attributes:
+      label: Story ID
+      description: Use ONI-<number>
+      placeholder: ONI-123
+    validations:
+      required: true
+  - type: textarea
+    id: user_story
+    attributes:
+      label: User Story
+      placeholder: As a player, I can...
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: Checklist of expected outcomes
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+    validations:
+      required: true
+  - type: textarea
+    id: test_plan
+    attributes:
+      label: Test Plan
+      placeholder: Commands, replay traces, expected report entries
+    validations:
+      required: true
+  - type: input
+    id: branch
+    attributes:
+      label: Suggested Branch Name
+      placeholder: feature/oni-123-short-slug
