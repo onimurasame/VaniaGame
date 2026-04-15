@@ -32,6 +32,9 @@ class PlayerRenderer(assetManager: AssetManager, private val playerController: P
     private val playerAtlas: TextureAtlas
 
     private val idleAnimation: Animation<TextureAtlas.AtlasRegion>
+    private val runAnimation: Animation<TextureAtlas.AtlasRegion>
+    private val jumpAnimation: Animation<TextureAtlas.AtlasRegion>
+    private val fallAnimation: Animation<TextureAtlas.AtlasRegion>
     private val crouchAnimation: Animation<TextureAtlas.AtlasRegion>
     private val attackAnimation0: Animation<TextureAtlas.AtlasRegion>
     private val attackAnimation1: Animation<TextureAtlas.AtlasRegion>
@@ -40,6 +43,9 @@ class PlayerRenderer(assetManager: AssetManager, private val playerController: P
     private val attackAnimations: GdxArray<Animation<TextureAtlas.AtlasRegion>> = GdxArray()
 
     private var idleElapsedTime = 0f
+    private var runElapsedTime = 0f
+    private var jumpElapsedTime = 0f
+    private var fallElapsedTime = 0f
     private var attackElapsedTime = 0f
     private var crouchingElapsedTime = 0f
 
@@ -50,6 +56,9 @@ class PlayerRenderer(assetManager: AssetManager, private val playerController: P
         playerAtlas = assetManager[CHARACTER_ATLAS]
 
         idleAnimation = Animation(1f / 4f, playerAtlas.findAllRegions(Player.IDLE_ANIMATION_UNARMED))
+        runAnimation = Animation(1f / 12f, playerAtlas.findAllRegions(Player.RUN_ANIMATION))
+        jumpAnimation = Animation(1f / 10f, playerAtlas.findAllRegions(Player.JUMP_ANIMATION))
+        fallAnimation = Animation(1f / 10f, playerAtlas.findAllRegions(Player.FALL_ANIMATION))
         crouchAnimation = Animation(1f /4f, playerAtlas.findAllRegions(Player.IDLE_ANIMATION_CROUCH))
         attackAnimation0 = Animation(1f / 10f, playerAtlas.findAllRegions(Player.ATTACK_ANIMATION_SWORD1))
         attackAnimation1 = Animation(1f / 10f, playerAtlas.findAllRegions(Player.ATTACK_ANIMATION_SWORD2))
@@ -71,11 +80,11 @@ class PlayerRenderer(assetManager: AssetManager, private val playerController: P
         batch.use {
             when(playerController.player.state) {
                 Player.State.IDLE -> drawIdleAnimation()
-                Player.State.MOVING -> log.debug("moving")
-                Player.State.JUMPING -> log.debug("jumping")
+                Player.State.MOVING -> drawRunAnimation()
+                Player.State.JUMPING -> drawJumpOrFallAnimation()
                 Player.State.STANDING_ATTACK -> drawAttackAnimation()
                 Player.State.CROUCHING -> drawCrouchingAnimation()
-                Player.State.CROUCHING_ATTACK -> log.debug("crouching_attack")
+                Player.State.CROUCHING_ATTACK -> drawAttackAnimation()
 
 
             }
@@ -86,24 +95,51 @@ class PlayerRenderer(assetManager: AssetManager, private val playerController: P
 
     private fun drawIdleAnimation() {
         idleElapsedTime += Gdx.graphics.deltaTime
-        batch.draw(idleAnimation.getKeyFrame(idleElapsedTime, true), playerController.player.x, playerController.player.y)
+        drawFacingFrame(idleAnimation.getKeyFrame(idleElapsedTime, true))
+    }
+
+    private fun drawRunAnimation() {
+        runElapsedTime += Gdx.graphics.deltaTime
+        drawFacingFrame(runAnimation.getKeyFrame(runElapsedTime, true))
+    }
+
+    private fun drawJumpOrFallAnimation() {
+        if (playerController.player.velocityY >= 0f) {
+            jumpElapsedTime += Gdx.graphics.deltaTime
+            drawFacingFrame(jumpAnimation.getKeyFrame(jumpElapsedTime, true))
+            return
+        }
+
+        fallElapsedTime += Gdx.graphics.deltaTime
+        drawFacingFrame(fallAnimation.getKeyFrame(fallElapsedTime, true))
     }
 
     private fun drawCrouchingAnimation() {
         crouchingElapsedTime += Gdx.graphics.deltaTime
-        batch.draw(crouchAnimation.getKeyFrame(crouchingElapsedTime, true), playerController.player.x, playerController.player.y)
+        drawFacingFrame(crouchAnimation.getKeyFrame(crouchingElapsedTime, true))
     }
 
     private fun drawAttackAnimation() {
-        batch.draw(attackAnimations[playerController.player.comboState].getKeyFrame(attackElapsedTime), playerController.player.x, playerController.player.y)
+        drawFacingFrame(attackAnimations[playerController.player.comboState].getKeyFrame(attackElapsedTime))
 
         if(attackAnimations[playerController.player.comboState].isAnimationFinished(attackElapsedTime)) {
             attackElapsedTime = 0f
             playerController.player.comboState++
-            playerController.player.state = Player.State.IDLE
+            playerController.player.state = if (playerController.player.crouchHeld) Player.State.CROUCHING else Player.State.IDLE
         } else {
             attackElapsedTime += Gdx.graphics.deltaTime
         }
+    }
+
+    private fun drawFacingFrame(frame: TextureAtlas.AtlasRegion) {
+        val x = playerController.player.x
+        val y = playerController.player.y
+        if (playerController.player.facingRight) {
+            batch.draw(frame, x, y)
+            return
+        }
+
+        batch.draw(frame, x + frame.regionWidth, y, -frame.regionWidth.toFloat(), frame.regionHeight.toFloat())
     }
 
     fun resize(width: Int, height: Int) {

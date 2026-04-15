@@ -28,6 +28,7 @@ class Gameplay(game: VaniaGame) : ScreenAdapter() {
     }
 
     override fun render(delta: Float) {
+        playerController.update(delta)
         clearScreen()
         backgroundRenderer.render()
         playerRenderer.render()

@@ -133,3 +133,28 @@ bash ./gradlew :android:tasks
 ## Current phase status
 
 - Phase 0 through Phase 6 completed and tagged.
+
+## Phase 7 - Movement feel baseline implementation
+
+Goal: land the first playable controller baseline (SotN-inspired) now that build/deployment modernization phases are complete.
+
+Changes:
+
+- `core/src/com/onimurasame/vania/entity/Player.kt`
+  - Added movement/input physics fields (velocity, facing, grounded state, jump buffer flags/timers).
+- `core/src/com/onimurasame/vania/controller/PlayerInputController.kt`
+  - Added held input tracking for movement axis and jump/crouch intent buffering.
+- `core/src/com/onimurasame/vania/controller/PlayerController.kt`
+  - Added update loop with acceleration/deceleration, coyote time, jump buffering, variable jump, gravity shaping, and state transitions.
+- `core/src/com/onimurasame/vania/screen/Gameplay.kt`
+  - Wired controller update call per frame before rendering.
+- `core/src/com/onimurasame/vania/renderer/PlayerRenderer.kt`
+  - Added run/jump/fall animation rendering and facing flip support.
+- `docs/movement-feel-reference.md`
+  - Added reference notes and tuning guide used for baseline movement behavior.
+
+Expected validation:
+
+```bash
+bash ./gradlew -PdesktopOnly=true :core:compileKotlin :desktop:compileKotlin
+```
