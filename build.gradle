@@ -12,7 +12,7 @@ buildscript {
     }
     dependencies {
         if (!desktopOnly) {
-            classpath 'com.android.tools.build:gradle:3.2.0'
+            classpath 'com.android.tools.build:gradle:8.5.2'
         }
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
@@ -89,18 +89,10 @@ project(":desktop") {
 
 if (findProject(":android") != null) {
     project(":android") {
-        apply plugin: "android"
-        apply plugin: "kotlin-android"
+        apply plugin: "com.android.application"
+        apply plugin: "org.jetbrains.kotlin.android"
 
         configurations { natives }
-
-        android {
-            defaultConfig {
-                minSdkVersion 21
-                targetSdkVersion 28
-                multiDexEnabled true
-            }
-        }
 
         dependencies {
             implementation project(":core")
@@ -129,7 +121,7 @@ if (findProject(":android") != null) {
             // Gives error
             //implementation "de.tomgrill.gdxdialogs:gdx-dialogs-android:1.2.5"
             implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-            implementation 'com.android.support:multidex:1.0.3'
+            implementation "androidx.multidex:multidex:2.0.1"
         }
     }
 }

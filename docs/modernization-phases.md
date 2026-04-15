@@ -107,6 +107,29 @@ scripts/package-desktop.sh --help
 scripts/deploy-steamdeck.sh --help
 ```
 
-## Upcoming phases
+## Phase 6 - Android reintegration
 
-- Phase 6: Android reintegration
+Goal: restore Android module compatibility after Gradle/Kotlin modernization so Android is no longer blocked by legacy AGP configuration.
+
+Changes:
+
+- `build.gradle`
+  - Android Gradle Plugin upgraded to `8.5.2`.
+  - Android module plugin ids modernized to `com.android.application` and `org.jetbrains.kotlin.android`.
+  - Multidex dependency moved to AndroidX (`androidx.multidex:multidex:2.0.1`).
+- `android/build.gradle`
+  - Added `namespace`, migrated SDK config (`compileSdk`, `minSdk`, `targetSdk`) to current DSL.
+  - Updated packaging options to new AGP resources syntax.
+  - Updated legacy `compile` configuration references to `implementation` in IDE helper blocks.
+- `gradle.properties`
+  - Enabled AndroidX + Jetifier for Android dependency compatibility.
+
+Expected validation:
+
+```bash
+bash ./gradlew :android:tasks
+```
+
+## Current phase status
+
+- Phase 0 through Phase 6 completed and tagged.
