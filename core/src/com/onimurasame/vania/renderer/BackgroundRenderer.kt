@@ -4,9 +4,11 @@ import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.onimurasame.vania.configuration.GameConfig
+import com.onimurasame.vania.configuration.LevelGeometry
 import com.onimurasame.vania.controller.PlayerController
 import com.onimurasame.vania.util.ext.GdxArray
 import com.onimurasame.vania.util.ext.logger
@@ -18,6 +20,7 @@ class BackgroundRenderer(assetManager: AssetManager, private val playerControlle
         @JvmStatic
         private val log = logger<BackgroundRenderer>()
         private const val BACKGROUND_ATLAS = "backgrounds/forest/forest_background.atlas"
+        private const val CAMERA_LERP = 0.12f
     }
 
     private val camera = OrthographicCamera()
@@ -41,6 +44,7 @@ class BackgroundRenderer(assetManager: AssetManager, private val playerControlle
 
     fun render() {
         viewport.apply()
+        updateCamera()
         camera.update()
 
         batch.projectionMatrix = camera.combined
@@ -51,6 +55,22 @@ class BackgroundRenderer(assetManager: AssetManager, private val playerControlle
             }
         }
 
+    }
+
+    private fun updateCamera() {
+        val player = playerController.player
+        val halfViewportWidth = viewport.worldWidth * 0.5f
+        val halfViewportHeight = viewport.worldHeight * 0.5f
+        val minX = halfViewportWidth
+        val maxX = MathUtils.clamp(LevelGeometry.LEVEL_WIDTH - halfViewportWidth, minX, LevelGeometry.LEVEL_WIDTH)
+        val minY = halfViewportHeight
+        val maxY = MathUtils.clamp(LevelGeometry.LEVEL_HEIGHT - halfViewportHeight, minY, LevelGeometry.LEVEL_HEIGHT)
+
+        val targetX = MathUtils.clamp(player.x + 24f, minX, maxX)
+        val targetY = MathUtils.clamp(player.y + 20f, minY, maxY)
+
+        camera.position.x = MathUtils.lerp(camera.position.x, targetX, CAMERA_LERP)
+        camera.position.y = MathUtils.lerp(camera.position.y, targetY, CAMERA_LERP)
     }
 
     fun resize(width: Int, height: Int) {

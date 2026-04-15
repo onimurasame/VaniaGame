@@ -132,7 +132,7 @@ bash ./gradlew :android:tasks
 
 ## Current phase status
 
-- Phase 0 through Phase 8 completed and tagged.
+- Phase 0 through Phase 9 completed and tagged.
 
 ## Phase 7 - Movement feel baseline implementation
 
@@ -181,4 +181,23 @@ Expected validation:
 ```bash
 bash ./gradlew -PdesktopOnly=true :core:compileKotlin :desktop:compileKotlin
 bash ./gradlew :android:assembleDebug
+```
+
+## Phase 9 - Camera follow and clamp baseline
+
+Goal: improve PC playability by making the world camera track player movement smoothly inside level bounds.
+
+Changes:
+
+- `core/src/com/onimurasame/vania/configuration/LevelGeometry.kt`
+  - Added explicit level dimensions and extended test platforms for visible camera travel.
+- `core/src/com/onimurasame/vania/renderer/PlayerRenderer.kt`
+  - Added smooth player-follow camera update with world-bounds clamping.
+- `core/src/com/onimurasame/vania/renderer/BackgroundRenderer.kt`
+  - Added matching follow/clamp camera behavior so background and foreground stay aligned.
+
+Expected validation:
+
+```bash
+bash ./gradlew -PdesktopOnly=true :core:compileKotlin :desktop:compileKotlin
 ```
