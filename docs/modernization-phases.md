@@ -29,9 +29,26 @@ Usage:
 bash ./gradlew -PdesktopOnly=true :core:tasks :desktop:tasks
 ```
 
+## Phase 2 - LWJGL3 desktop backend migration
+
+Goal: move desktop runtime off deprecated LWJGL2 backend before broader Gradle/Kotlin upgrades.
+
+Changes:
+
+- `build.gradle`
+  - Desktop backend dependency switched from `gdx-backend-lwjgl` to `gdx-backend-lwjgl3`.
+- `desktop/src/com/onimurasame/vania/desktop/DesktopLauncher.kt`
+  - Migrated launcher API from LWJGL2 to LWJGL3 classes/config methods.
+  - Added explicit title + vsync configuration.
+
+Expected smoke test:
+
+```bash
+bash ./gradlew -PdesktopOnly=true :desktop:run
+```
+
 ## Upcoming phases
 
-- Phase 2: LWJGL3 desktop backend migration
 - Phase 3: Gradle + Kotlin staged upgrades
 - Phase 4: JDK toolchain modernization
 - Phase 5: Steam packaging hardening
