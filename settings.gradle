@@ -1,1 +1,7 @@
-include 'desktop', 'android', 'core'
+def desktopOnly = gradle.startParameter.projectProperties.containsKey("desktopOnly")
+
+include 'desktop', 'core'
+
+if (!desktopOnly) {
+    include 'android'
+}
