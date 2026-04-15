@@ -47,9 +47,66 @@ Expected smoke test:
 bash ./gradlew -PdesktopOnly=true :desktop:run
 ```
 
+## Phase 3 - Gradle/Kotlin desktop-core upgrade
+
+Goal: modernize desktop/core build pipeline to a current Gradle generation while Android remains decoupled.
+
+Changes:
+
+- `gradle/wrapper/gradle-wrapper.properties`
+  - Wrapper upgraded from Gradle `4.6` to `8.7`.
+- `build.gradle`
+  - Kotlin Gradle plugin upgraded to `1.9.24`.
+  - Android Gradle plugin classpath resolution skipped when running `-PdesktopOnly=true`.
+- `desktop/build.gradle`
+  - Migrated JavaExec tasks to modern `mainClass.set(...)`.
+  - Migrated `dist` task away from removed `configurations.compile`.
+  - Set Java compatibility to 1.8 for legacy libGDX compatibility.
+
+Expected smoke test:
+
+```bash
+bash ./gradlew -PdesktopOnly=true :core:compileKotlin :desktop:compileKotlin
+```
+
+## Phase 4 - JDK toolchain modernization
+
+Goal: remove manual JDK switching and make desktop/core builds deterministic on JDK 21.
+
+Changes:
+
+- `build.gradle`
+  - Added Gradle Java toolchain configuration for language level 21 in Java projects.
+  - Added Kotlin JVM toolchain configuration (`jvmToolchain(21)`) for Kotlin JVM projects.
+- `gradle.properties`
+  - Added `org.gradle.java.installations.paths` pointing to Homebrew `openjdk@21` installation.
+
+Expected smoke test:
+
+```bash
+bash ./gradlew -PdesktopOnly=true :core:compileKotlin :desktop:compileKotlin
+```
+
+## Phase 5 - Steam packaging hardening
+
+Goal: stabilize local packaging/deployment workflow for Steam Deck and Linux desktop test loops.
+
+Changes:
+
+- `scripts/package-desktop.sh`
+  - Uses desktop-only Gradle mode (`-PdesktopOnly=true :desktop:dist`) for faster and safer packaging.
+- `scripts/deploy-steamdeck.sh`
+  - Deploys packaged build to Deck over SSH + rsync.
+- `docs/steamdeck-deployment.md`
+  - Updated to reflect current Gradle/Kotlin/JDK21 stack and deployment commands.
+
+Expected smoke test:
+
+```bash
+scripts/package-desktop.sh --help
+scripts/deploy-steamdeck.sh --help
+```
+
 ## Upcoming phases
 
-- Phase 3: Gradle + Kotlin staged upgrades
-- Phase 4: JDK toolchain modernization
-- Phase 5: Steam packaging hardening
 - Phase 6: Android reintegration
