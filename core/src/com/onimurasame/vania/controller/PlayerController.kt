@@ -1,5 +1,7 @@
 package com.onimurasame.vania.controller
 
+import com.badlogic.gdx.math.Rectangle
+import com.onimurasame.vania.configuration.LevelGeometry
 import com.onimurasame.vania.entity.Player
 import kotlin.math.abs
 import kotlin.math.max
@@ -18,11 +20,20 @@ class PlayerController {
         private const val JUMP_RELEASE_MULTIPLIER = 0.45f
         private const val COYOTE_TIME_SEC = 0.10f
         private const val JUMP_BUFFER_SEC = 0.10f
-        private const val GROUND_Y = 0f
+        private const val COLLIDER_OFFSET_X = 16f
+        private const val COLLIDER_OFFSET_Y = 2f
+        private const val COLLIDER_WIDTH = 18f
+        private const val COLLIDER_HEIGHT = 30f
     }
 
     var player = Player()
     var inputController = PlayerInputController(player)
+    private val solids = LevelGeometry.solids
+
+    init {
+        player.x = LevelGeometry.SPAWN_X
+        player.y = LevelGeometry.SPAWN_Y
+    }
 
     fun update(delta: Float) {
         val dt = min(delta, 1f / 30f)
@@ -72,18 +83,8 @@ class PlayerController {
             player.velocityY = max(TERMINAL_FALL_SPEED, player.velocityY)
         }
 
-        player.x += player.velocityX * dt
-        player.y += player.velocityY * dt
-
-        if (player.y <= GROUND_Y) {
-            player.y = GROUND_Y
-            if (player.velocityY < 0f) {
-                player.velocityY = 0f
-            }
-            player.isGrounded = true
-        } else {
-            player.isGrounded = false
-        }
+        resolveHorizontalCollisions(dt)
+        resolveVerticalCollisions(dt)
 
         if (abs(player.velocityX) > 0.001f) {
             player.facingRight = player.velocityX > 0f
@@ -108,4 +109,67 @@ class PlayerController {
         }
         return max(current - maxDelta, target)
     }
+
+    private fun resolveHorizontalCollisions(dt: Float) {
+        if (player.velocityX == 0f) {
+            return
+        }
+
+        player.x += player.velocityX * dt
+        val playerBounds = bounds()
+
+        solids.forEach { solid ->
+            if (!playerBounds.overlaps(solid)) {
+                return@forEach
+            }
+
+            if (player.velocityX > 0f) {
+                player.x = solid.x - COLLIDER_WIDTH - COLLIDER_OFFSET_X
+            } else {
+                player.x = solid.x + solid.width - COLLIDER_OFFSET_X
+            }
+            player.velocityX = 0f
+            playerBounds.setPosition(player.x + COLLIDER_OFFSET_X, player.y + COLLIDER_OFFSET_Y)
+        }
+    }
+
+    private fun resolveVerticalCollisions(dt: Float) {
+        player.y += player.velocityY * dt
+        val playerBounds = bounds()
+        var groundedByCollision = false
+
+        solids.forEach { solid ->
+            if (!playerBounds.overlaps(solid)) {
+                return@forEach
+            }
+
+            if (player.velocityY > 0f) {
+                player.y = solid.y - COLLIDER_HEIGHT - COLLIDER_OFFSET_Y
+            } else {
+                player.y = solid.y + solid.height - COLLIDER_OFFSET_Y
+                groundedByCollision = true
+            }
+            player.velocityY = 0f
+            playerBounds.setPosition(player.x + COLLIDER_OFFSET_X, player.y + COLLIDER_OFFSET_Y)
+        }
+
+        if (!groundedByCollision) {
+            val groundProbe = Rectangle(
+                playerBounds.x,
+                playerBounds.y - 1f,
+                playerBounds.width,
+                playerBounds.height
+            )
+            groundedByCollision = solids.any(groundProbe::overlaps)
+        }
+
+        player.isGrounded = groundedByCollision
+    }
+
+    private fun bounds(): Rectangle = Rectangle(
+        player.x + COLLIDER_OFFSET_X,
+        player.y + COLLIDER_OFFSET_Y,
+        COLLIDER_WIDTH,
+        COLLIDER_HEIGHT
+    )
 }

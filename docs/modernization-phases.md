@@ -132,7 +132,7 @@ bash ./gradlew :android:tasks
 
 ## Current phase status
 
-- Phase 0 through Phase 6 completed and tagged.
+- Phase 0 through Phase 8 completed and tagged.
 
 ## Phase 7 - Movement feel baseline implementation
 
@@ -157,4 +157,28 @@ Expected validation:
 
 ```bash
 bash ./gradlew -PdesktopOnly=true :core:compileKotlin :desktop:compileKotlin
+```
+
+## Phase 8 - Collision geometry and Android manifest compliance
+
+Goal: complete the first real collision pass and finish Android debug build validation against modern target SDK requirements.
+
+Changes:
+
+- `core/src/com/onimurasame/vania/configuration/LevelGeometry.kt`
+  - Added tile-based solid geometry definition and spawn point.
+- `core/src/com/onimurasame/vania/controller/PlayerController.kt`
+  - Replaced ground-plane clamp with axis-separated collision resolution against level solids.
+  - Added player collision bounds and grounded probe logic.
+- `android/AndroidManifest.xml`
+  - Removed legacy manifest `package` attribute now superseded by Gradle namespace.
+  - Added required `android:exported="true"` for launcher activity (Android 12+ compliance).
+- `docs/modernization-phases.md`
+  - Updated phase tracking status.
+
+Expected validation:
+
+```bash
+bash ./gradlew -PdesktopOnly=true :core:compileKotlin :desktop:compileKotlin
+bash ./gradlew :android:assembleDebug
 ```
