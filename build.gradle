@@ -1,5 +1,6 @@
 buildscript {
-    ext.kotlinVersion = '1.2.71'
+    ext.kotlinVersion = '1.9.24'
+    ext.desktopOnly = gradle.startParameter.projectProperties.containsKey("desktopOnly")
 
     repositories {
         mavenLocal()
@@ -10,7 +11,9 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0'
+        if (!desktopOnly) {
+            classpath 'com.android.tools.build:gradle:3.2.0'
+        }
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
     }
@@ -37,6 +40,19 @@ allprojects {
         google()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    }
+}
+
+subprojects {
+    tasks.withType(JavaCompile).configureEach {
+        sourceCompatibility = JavaVersion.VERSION_1_8.toString()
+        targetCompatibility = JavaVersion.VERSION_1_8.toString()
+    }
+
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        kotlinOptions {
+            jvmTarget = JavaVersion.VERSION_1_8.toString()
+        }
     }
 }
 
